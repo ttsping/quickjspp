@@ -383,4 +383,8 @@ void rqsort(void *base, size_t nmemb, size_t size,
             int (*cmp)(const void *, const void *, void *),
             void *arg);
 
+#ifdef _MSC_VER
+int gettimeofday(struct timeval* tp, struct timezone* tzp);
+#endif
+
 #endif  /* CUTILS_H */

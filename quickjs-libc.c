@@ -39,6 +39,7 @@
   #include <conio.h>
   #include <io.h>
   #include <fcntl.h>
+  #include <direct.h>
   #include <sys/types.h>
   #include <sys/stat.h>
   #include <sys/utime.h>
@@ -1794,7 +1795,7 @@ static JSValue js_os_remove(JSContext *ctx, JSValueConst this_val,
     {
         struct stat st;
         if (stat(filename, &st) == 0 && S_ISDIR(st.st_mode)) {
-            ret = rmdir(filename);
+            ret = _rmdir(filename);
         } else {
             ret = unlink(filename);
         }
@@ -2385,7 +2386,7 @@ static JSValue js_os_getcwd(JSContext *ctx, JSValueConst this_val,
     char buf[PATH_MAX];
     int err;
     
-    if (!getcwd(buf, sizeof(buf))) {
+    if (!_getcwd(buf, sizeof(buf))) {
         buf[0] = '\0';
         err = errno;
     } else {
@@ -2403,7 +2404,7 @@ static JSValue js_os_chdir(JSContext *ctx, JSValueConst this_val,
     target = JS_ToCString(ctx, argv[0]);
     if (!target)
         return JS_EXCEPTION;
-    err = js_get_errno(chdir(target));
+    err = js_get_errno(_chdir(target));
     JS_FreeCString(ctx, target);
     return JS_NewInt32(ctx, err);
 }
@@ -2425,7 +2426,7 @@ static JSValue js_os_mkdir(JSContext *ctx, JSValueConst this_val,
         return JS_EXCEPTION;
 #if defined(_WIN32)
     (void)mode;
-    ret = js_get_errno(mkdir(path));
+    ret = js_get_errno(_mkdir(path));
 #else
     ret = js_get_errno(mkdir(path, mode));
 #endif
